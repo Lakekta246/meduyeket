@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎂 מדויקת לסבתא 🎂</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff9e6;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+      direction: rtl;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      font-size: 18px;
+      margin: 10px;
+      width: 200px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #ffcc80;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .letter-box {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      margin: 5px;
+      line-height: 40px;
+      font-weight: bold;
+      font-size: 22px;
+      border: 1px solid #ccc;
+    }
+
+    .correct {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    .close {
+      background-color: #ff9800;
+      color: white;
+    }
+
+    .wrong {
+      background-color: #f44336;
+      color: white;
+    }
+
+    .guesses {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎉 מדויקת לסבתא 🎉</h1>
+  <p>נסו לנחש את המילה הסודית (5 אותיות)</p>
+
+  <input type="text" id="guess" placeholder="ניחוש..." maxlength="5">
+  <button onclick="checkGuess()">נחש</button>
+
+  <div class="guesses" id="guesses"></div>
+
+  <script>
+    const answer = "לבבה"; // ← כאן תשנה את המילה הסודית שלך!
+
+    function checkGuess() {
+      const input = document.getElementById("guess");
+      const guess = input.value.trim();
+      input.value = "";
+
+      if (guess.length !== 5) {
+        alert("המילה חייבת להיות באורך של 5 אותיות");
+        return;
+      }
+
+      const row = document.createElement("div");
+      for (let i = 0; i < 5; i++) {
+        const span = document.createElement("span");
+        span.classList.add("letter-box");
+        span.textContent = guess[i];
+
+        if (guess[i] === answer[i]) {
+          span.classList.add("correct");
+        } else if (answer.includes(guess[i])) {
+          span.classList.add("close");
+        } else {
+          span.classList.add("wrong");
+        }
+
+        row.appendChild(span);
+      }
+
+      document.getElementById("guesses").appendChild(row);
+
+      if (guess === answer) {
+        setTimeout(() => {
+          alert("כל הכבוד! ניחשת נכון 🎉");
+        }, 100);
+      }
+    }
+  </script>
+</body>
+</html>
