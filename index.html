@@ -43,39 +43,93 @@
       font-weight: bold;
       font-size: 22px;
       border: 1px solid #ccc;
+      background-color: #eee;
     }
 
     .correct {
-      background-color: #4caf50;
+      background-color: #4caf50 !important;
       color: white;
     }
 
     .close {
-      background-color: #ff9800;
+      background-color: #ff9800 !important;
       color: white;
     }
 
     .wrong {
-      background-color: #f44336;
+      background-color: #f44336 !important;
       color: white;
     }
 
     .guesses {
       margin-top: 20px;
     }
+
+    .keyboard {
+      margin-top: 30px;
+      direction: ltr;
+    }
+
+    .key {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      margin: 2px;
+      line-height: 30px;
+      text-align: center;
+      font-weight: bold;
+      background-color: #ddd;
+      border-radius: 4px;
+    }
+
+    .disabled {
+      pointer-events: none;
+      opacity: 0.5;
+    }
   </style>
 </head>
 <body>
   <h1>🎉 מדויקת לסבתא 🎉</h1>
-  <p>נסו לנחש את המילה הסודית (5 אותיות)</p>
+  <p>נסו לנחש את המילה הסודית (5 אותיות). יש לכם עד 10 נסיונות!</p>
 
   <input type="text" id="guess" placeholder="ניחוש..." maxlength="5">
   <button onclick="checkGuess()">נחש</button>
 
   <div class="guesses" id="guesses"></div>
+  <div class="keyboard" id="keyboard"></div>
 
   <script>
-    const answer = "תבשיל"; // ← כאן תשנה את המילה הסודית שלך!
+    const answer = "חולדה";
+    let attempts = 0;
+    const maxAttempts = 10;
+    const keyboardColors = {};
+
+    const hebrewLetters = "אבגדהוזחטיכלמנסעפצקרשתםןףךץ".split("");
+    const keyboard = document.getElementById("keyboard");
+
+    function renderKeyboard() {
+      keyboard.innerHTML = "";
+      hebrewLetters.forEach(letter => {
+        const key = document.createElement("div");
+        key.className = "key";
+        key.textContent = letter;
+        if (keyboardColors[letter]) {
+          key.style.backgroundColor = keyboardColors[letter];
+          key.style.color = "white";
+        }
+        keyboard.appendChild(key);
+      });
+    }
+
+    function updateKeyboardColors(letter, status) {
+      const colorPriority = {"#f44336": 1, "#ff9800": 2, "#4caf50": 3};
+      const current = keyboardColors[letter];
+      const currentPriority = current ? colorPriority[current] : 0;
+      const newPriority = colorPriority[status];
+      if (newPriority > currentPriority) {
+        keyboardColors[letter] = status;
+      }
+    }
 
     function checkGuess() {
       const input = document.getElementById("guess");
@@ -87,6 +141,11 @@
         return;
       }
 
+      if (attempts >= maxAttempts) {
+        alert("סיימת את כל הניסיונות! המילה הייתה: " + answer);
+        return;
+      }
+
       const row = document.createElement("div");
       for (let i = 0; i < 5; i++) {
         const span = document.createElement("span");
@@ -95,23 +154,34 @@
 
         if (guess[i] === answer[i]) {
           span.classList.add("correct");
+          updateKeyboardColors(guess[i], "#4caf50");
         } else if (answer.includes(guess[i])) {
           span.classList.add("close");
+          updateKeyboardColors(guess[i], "#ff9800");
         } else {
           span.classList.add("wrong");
+          updateKeyboardColors(guess[i], "#f44336");
         }
 
         row.appendChild(span);
       }
 
       document.getElementById("guesses").appendChild(row);
+      attempts++;
+      renderKeyboard();
 
       if (guess === answer) {
         setTimeout(() => {
           alert("כל הכבוד! ניחשת נכון 🎉");
         }, 100);
+      } else if (attempts >= maxAttempts) {
+        setTimeout(() => {
+          alert("לא הצלחת. המילה הייתה: " + answer);
+        }, 100);
       }
     }
+
+    renderKeyboard();
   </script>
 </body>
 </html>
